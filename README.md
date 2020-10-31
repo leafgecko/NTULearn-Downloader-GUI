@@ -4,14 +4,24 @@ GUI wrapper around the [ntu_learn_downloader](https://github.com/leafgecko/ntule
 
 # Development Set up
 
+We recommend to using [virtual environments](https://docs.python.org/3/tutorial/venv.html) when developing:
+
 ```
 python3 -m venv venv
 # on Mac/Linux
 source venv/bin/activate
 # on Windows
 call venv\scripts\activate.bat
+```
+
+Install dependancies:
+
+```
 pip install deps/ntu_learn_downloader-0.2.0.tar.gz
+# on Mac/Linux
 pip install -r requirements.txt
+# on windows
+pip install -r requirements_windows.txt
 ```
 
 To run tests:
