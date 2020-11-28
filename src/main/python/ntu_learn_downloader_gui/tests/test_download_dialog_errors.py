@@ -10,6 +10,8 @@ import shutil
 from pathlib import Path
 
 import ntu_learn_downloader
+from ntu_learn_downloader_gui.tests.mock_server import MOCK_CONSTANTS
+
 from fbs_runtime.application_context.PyQt5 import ApplicationContext
 from PyQt5 import QtWidgets, QtCore
 from PyQt5.QtTest import QTest
@@ -73,6 +75,7 @@ def remove_test_dir():
         shutil.rmtree(DOWNLOAD_DIR)
 
 
+@unittest.mock.patch.dict('ntu_learn_downloader_gui.logging.__dict__', MOCK_CONSTANTS)
 class TestDownloadDialogBase(unittest.TestCase):
     def setUp(self):
         remove_test_dir()
@@ -105,6 +108,7 @@ class TestDownloadDialogBase(unittest.TestCase):
         return items
 
 
+@unittest.mock.patch.dict('ntu_learn_downloader_gui.logging.__dict__', MOCK_CONSTANTS)
 class TestNewDownloadDialog(TestDownloadDialogBase):
     @patch("ntu_learn_downloader_gui.gui.DownloadDialog.handle_error")
     @patch(

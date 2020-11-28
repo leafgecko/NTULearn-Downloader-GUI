@@ -26,6 +26,7 @@ from PyQt5.QtCore import QSettings, QThreadPool
 from PyQt5.QtGui import QStandardItem, QStandardItemModel
 
 from ntu_learn_downloader_gui.QtThreading import Worker
+from ntu_learn_downloader_gui.logging import Logger
 
 LAYOUTS_PATH = os.path.join(os.path.dirname(__file__), "layouts")
 IMAGES_PATH = os.path.join(os.path.dirname(__file__), "images")
@@ -177,6 +178,8 @@ class DownloadDialog(QtWidgets.QDialog):
         """
         super(DownloadDialog, self).__init__()
         uic.loadUi(appctxt.get_resource("layouts/download.ui"), self)
+
+        self.logger = Logger(appctxt)
 
         self.appctxt = appctxt
         self.BbRouter = BbRouter
@@ -341,8 +344,13 @@ class DownloadDialog(QtWidgets.QDialog):
             pass
 
     def handle_error(self, full_file_name: str, trace: str):
-        """Create a MessageBox with a trace dump
+        """Create a MessageBox with a trace dump and log error to server
         """
+        try:
+            self.logger.log_error(trace)
+        except Exception:
+            pass
+
         alert = QtWidgets.QMessageBox()
         alert.setWindowTitle("Failed to get download link")
         alert.setText(
@@ -477,6 +485,11 @@ class DownloadDialog(QtWidgets.QDialog):
                 node_data["download_link"] = download_link
                 node_data["filename"] = filename
                 node.setData(0, Qt.UserRole, node_data)
+
+            try:
+                self.logger.log_successful_download(numDownloaded)
+            except Exception:
+                pass
 
         worker = Worker(download_from_nodes)
         worker.signals.result.connect(display_result_and_update_node_data)
