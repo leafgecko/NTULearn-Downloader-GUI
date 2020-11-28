@@ -158,14 +158,14 @@ class TestNewDownloadDialog(TestDownloadDialogBase):
 
         self.form.handle_reload()
         # QTest.mouseClick(self.form.reloadButton, Qt.LeftButton) # NOTE doesn't work for some reason
-        appctxt.app.processEvents(QtCore.QEventLoop.AllEvents, 50)
+        appctxt.app.processEvents(QtCore.QEventLoop.AllEvents, 500)
         # needs to be in a list since self.data is List[Dict]
         self.assertEqual([get_download_dir_fixture], self.form.data)
         self.assertEqual(self.number_of_visible_items(), 1)
 
         # if press download without selecting any files, then nothing should be downloaded
         QTest.mouseClick(self.form.downloadButton, Qt.LeftButton)
-        appctxt.app.processEvents(QtCore.QEventLoop.AllEvents, 50)
+        appctxt.app.processEvents(QtCore.QEventLoop.AllEvents, 500)
         self.assertEqual(m_download.call_count, 0)
 
         # select all files
@@ -174,7 +174,7 @@ class TestNewDownloadDialog(TestDownloadDialogBase):
 
         # click download files
         QTest.mouseClick(self.form.downloadButton, Qt.LeftButton)
-        appctxt.app.processEvents(QtCore.QEventLoop.AllEvents, 50)
+        appctxt.app.processEvents(QtCore.QEventLoop.AllEvents, 500)
         self.assertEqual(m_download.call_count, 1)
 
         # assert that files have been downloaded
@@ -246,7 +246,7 @@ class TestExistingDownloadDialog(TestDownloadDialogBase):
 
         # clicking the reload button
         self.form.handle_reload()
-        appctxt.app.processEvents(QtCore.QEventLoop.AllEvents, 50)
+        appctxt.app.processEvents(QtCore.QEventLoop.AllEvents, 500)
         # needs to be in a list since self.data is List[Dict]
         self.assertEqual([get_download_dir_fixture_2], self.form.data)
         self.assertEqual(self.number_of_visible_items(), 9)
@@ -257,7 +257,7 @@ class TestExistingDownloadDialog(TestDownloadDialogBase):
 
         # click download files
         QTest.mouseClick(self.form.downloadButton, Qt.LeftButton)
-        appctxt.app.processEvents(QtCore.QEventLoop.AllEvents, 50)
+        appctxt.app.processEvents(QtCore.QEventLoop.AllEvents, 500)
         self.assertEqual(m_download.call_count, 9)
         self.assertEqual(m_get_file_dl_link.call_count, 8)
         self.assertEqual(self.number_of_visible_items(), 0)
@@ -318,7 +318,7 @@ class TestExistingDownloadDialog(TestDownloadDialogBase):
 
         # clicking the reload button
         self.form.handle_reload()
-        appctxt.app.processEvents(QtCore.QEventLoop.AllEvents, 50)
+        appctxt.app.processEvents(QtCore.QEventLoop.AllEvents, 500)
         # needs to be in a list since self.data is List[Dict]
         self.assertEqual([get_download_dir_fixture_2], self.form.data)
         # 9 - 1 (already downloaded) - 1 (ignored) = 8
