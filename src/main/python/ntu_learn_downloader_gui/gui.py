@@ -354,8 +354,10 @@ class DownloadDialog(QtWidgets.QDialog):
         alert = QtWidgets.QMessageBox()
         alert.setWindowTitle("Failed to get download link")
         alert.setText(
-            "Failed to get download link for: {}. Please try again later. ".format(full_file_name) + 
-            "If the problem persists, please send the trace log below to us."
+            "Failed to get download link for: {}. Please try again later. ".format(
+                full_file_name
+            )
+            + "If the problem persists, please send the trace log below to us."
         )
         nonBoldFont = QtGui.QFont()
         nonBoldFont.setBold(False)
@@ -402,9 +404,11 @@ class DownloadDialog(QtWidgets.QDialog):
                                 self.BbRouter, node_data["predownload_link"]
                             )
                             filename = node_data["name"] + ".mp4"
-                    except Exception as e:
+                    except Exception:
                         trace = traceback.format_exc()
-                        progress_callback.emit((idx + 1, node_data['name'], False, None, None, trace))
+                        progress_callback.emit(
+                            (idx + 1, node_data["name"], False, None, None, trace)
+                        )
                         data_deltas.append(None)
                         continue
                 else:
@@ -416,23 +420,30 @@ class DownloadDialog(QtWidgets.QDialog):
                     numSkipped += 1
                     progress_callback.emit((idx + 1, filename, False, None, None, None))
                 else:
-                    numDownloaded += 1
-                    download(
-                        self.BbRouter,
-                        download_link,
-                        full_file_path,
-                        lambda bytes_downloaded, total_content_length: progress_callback.emit(
-                            (
-                                idx + 1,
-                                filename,
-                                True,
-                                bytes_downloaded,
-                                total_content_length,
-                                None
-                            )
-                        ),
-                    )
+                    try:
+                        download(
+                            self.BbRouter,
+                            download_link,
+                            full_file_path,
+                            lambda bytes_downloaded, total_content_length: progress_callback.emit(
+                                (
+                                    idx + 1,
+                                    filename,
+                                    True,
+                                    bytes_downloaded,
+                                    total_content_length,
+                                    None,
+                                )
+                            ),
+                        )
+                    except Exception:
+                        numSkipped += 1
+                        trace = traceback.format_exc()
+                        progress_callback.emit(
+                            (idx + 1, filename, False, None, None, trace)
+                        )
 
+                numDownloaded += 1
                 data_deltas.append((download_link, filename) if save_flag else None)
 
             return (numDownloaded, numSkipped, data_deltas)
@@ -446,8 +457,6 @@ class DownloadDialog(QtWidgets.QDialog):
                 data
             )
 
-            if stack_trace:
-                self.handle_error(filename, stack_trace)
 
             overall_progress = "({}/{})".format(numDownloaded, numFiles)
             prefix = "Downloading" if was_last_downloaded else "Skipping"
@@ -467,6 +476,9 @@ class DownloadDialog(QtWidgets.QDialog):
             )
             self.downloadProgressText.setText(text)
             self.progressBar.setValue(numDownloaded)
+
+            if stack_trace:
+                self.handle_error(filename, stack_trace)
 
         def display_result_and_update_node_data(result):
             self.setDownloadIgnoreButtonsEnabled(True)
