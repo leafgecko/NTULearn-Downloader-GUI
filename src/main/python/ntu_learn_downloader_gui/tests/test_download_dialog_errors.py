@@ -4,6 +4,7 @@ Testing unhappy paths
 import json
 import os
 import sys
+import time
 import unittest
 from unittest.mock import patch
 import shutil
@@ -125,7 +126,7 @@ class TestNewDownloadDialog(TestDownloadDialogBase):
 
         self.form.handle_reload()
         # QTest.mouseClick(self.form.reloadButton, Qt.LeftButton) # NOTE doesn't work for some reason
-        appctxt.app.processEvents(QtCore.QEventLoop.AllEvents, 50)
+        appctxt.app.processEvents(QtCore.QEventLoop.AllEvents, 500)
         # needs to be in a list since self.data is List[Dict]
         self.assertEqual([get_download_dir_fixture_2], self.form.data)
         self.assertEqual(len(self.get_visible_items()), 9)
@@ -136,7 +137,7 @@ class TestNewDownloadDialog(TestDownloadDialogBase):
 
         # click download files
         QTest.mouseClick(self.form.downloadButton, Qt.LeftButton)
-        appctxt.app.processEvents(QtCore.QEventLoop.AllEvents, 50)
+        appctxt.app.processEvents(QtCore.QEventLoop.AllEvents, 500)
 
         # 9 - 1 = 8 since 1 download failed
         self.assertEqual(m_download.call_count, 8)
@@ -153,7 +154,7 @@ class TestNewDownloadDialog(TestDownloadDialogBase):
 
         # click download files
         QTest.mouseClick(self.form.downloadButton, Qt.LeftButton)
-        appctxt.app.processEvents(QtCore.QEventLoop.AllEvents, 50)
+        appctxt.app.processEvents(QtCore.QEventLoop.AllEvents, 500)
 
         mock_handle_error.assert_called_once()
         self.assertEqual(m_get_file_dl_link.call_count, 10)
