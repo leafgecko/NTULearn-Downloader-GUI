@@ -14,12 +14,8 @@ from PyQt5 import QtWidgets, QtCore
 from PyQt5.QtTest import QTest
 from PyQt5.Qt import Qt
 
-from ntu_learn_downloader_gui.gui import DownloadDialog
-
-# from PyQt5.QtGui import QApplication
-# from PyQt5.QtTest import QTest
-# from PyQt5.QtCore import Qt
-
+from ntu_learn_downloader_gui.gui.download_dialog import DownloadDialog
+from ntu_learn_downloader_gui.gui.choose_dir_dialog import ChooseDirDialog
 
 FIXTURES_PATH = os.path.join(os.path.dirname(__file__), "fixtures")
 DOWNLOAD_DIR = os.path.join(os.path.dirname(__file__), "temp")
@@ -71,7 +67,7 @@ def remove_test_dir():
 class TestDownloadDialogBase(unittest.TestCase):
     def setUp(self):
         remove_test_dir()
-        self.form = DownloadDialog(appctxt, BbRouter, DOWNLOAD_DIR, courses_fixture)
+        self.form = DownloadDialog(appctxt, BbRouter, DOWNLOAD_DIR, courses_fixture, ChooseDirDialog)
 
     @classmethod
     def tearDownClass(cls):
@@ -145,14 +141,14 @@ class TestDownloadDialogBase(unittest.TestCase):
 @unittest.mock.patch.dict('ntu_learn_downloader_gui.logging.__dict__', MOCK_CONSTANTS)
 class TestNewDownloadDialog(TestDownloadDialogBase):
     @patch(
-        "ntu_learn_downloader_gui.gui.get_download_dir",
+        "ntu_learn_downloader_gui.gui.download_dialog.get_download_dir",
         return_value=get_download_dir_fixture,
     )
     @patch(  # TODO add get_recorded_lecture_download_link
-        "ntu_learn_downloader_gui.gui.get_file_download_link",
+        "ntu_learn_downloader_gui.gui.download_dialog.get_file_download_link",
         side_effect=mock_get_file_download_link,
     )
-    @patch("ntu_learn_downloader_gui.gui.download", side_effect=mock_download)
+    @patch("ntu_learn_downloader_gui.gui.download_dialog.download", side_effect=mock_download)
     def test_fresh_init_and_download_all_files(self, m_download, mock2, mock3):
         self.assertEqual(self.form.data, [])
 
@@ -229,19 +225,19 @@ class TestExistingDownloadDialog(TestDownloadDialogBase):
         remove_test_dir()
 
     @patch(
-        "ntu_learn_downloader_gui.gui.get_download_dir",
+        "ntu_learn_downloader_gui.gui.download_dialog.get_download_dir",
         return_value=get_download_dir_fixture_2,
     )
     @patch(  # TODO add get_recorded_lecture_download_link
-        "ntu_learn_downloader_gui.gui.get_file_download_link",
+        "ntu_learn_downloader_gui.gui.download_dialog.get_file_download_link",
         side_effect=mock_get_file_download_link,
     )
-    @patch("ntu_learn_downloader_gui.gui.download", side_effect=mock_download)
+    @patch("ntu_learn_downloader_gui.gui.download_dialog.download", side_effect=mock_download)
     def test_existing_init(self, m_download, m_get_file_dl_link, mock3):
         """simulate last refresh was subset and the new refresh returns subset_2
         """
         # start up
-        self.form = DownloadDialog(appctxt, BbRouter, DOWNLOAD_DIR, courses_fixture)
+        self.form = DownloadDialog(appctxt, BbRouter, DOWNLOAD_DIR, courses_fixture, ChooseDirDialog)
         self.assertEqual(self.form.data, saved_download_dir)
 
         # clicking the reload button
@@ -277,7 +273,7 @@ class TestExistingDownloadDialog(TestDownloadDialogBase):
         self.assertListEqual(saved_data, expected_data)
 
     @patch(
-        "ntu_learn_downloader_gui.gui.get_download_dir",
+        "ntu_learn_downloader_gui.gui.download_dialog.get_download_dir",
         return_value=get_download_dir_fixture_2,
     )
     def test_existing_and_ignored_files_dont_appear_on_tree(self, mock1):
@@ -313,7 +309,7 @@ class TestExistingDownloadDialog(TestDownloadDialogBase):
             Path(os.path.join(target_dir, "." + name)).touch()
 
         # start up
-        self.form = DownloadDialog(appctxt, BbRouter, DOWNLOAD_DIR, courses_fixture)
+        self.form = DownloadDialog(appctxt, BbRouter, DOWNLOAD_DIR, courses_fixture, ChooseDirDialog)
         self.assertEqual(self.form.data, saved_download_dir)
 
         # clicking the reload button
