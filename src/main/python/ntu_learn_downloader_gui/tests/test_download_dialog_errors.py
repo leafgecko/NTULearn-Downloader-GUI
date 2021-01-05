@@ -18,11 +18,8 @@ from PyQt5 import QtWidgets, QtCore
 from PyQt5.QtTest import QTest
 from PyQt5.Qt import Qt
 
-from ntu_learn_downloader_gui.gui import DownloadDialog
-
-# from PyQt5.QtGui import QApplication
-# from PyQt5.QtTest import QTest
-# from PyQt5.QtCore import Qt
+from ntu_learn_downloader_gui.gui.download_dialog import DownloadDialog
+from ntu_learn_downloader_gui.gui.choose_dir_dialog import ChooseDirDialog
 
 
 FIXTURES_PATH = os.path.join(os.path.dirname(__file__), "fixtures")
@@ -80,7 +77,7 @@ def remove_test_dir():
 class TestDownloadDialogBase(unittest.TestCase):
     def setUp(self):
         remove_test_dir()
-        self.form = DownloadDialog(appctxt, BbRouter, DOWNLOAD_DIR, courses_fixture)
+        self.form = DownloadDialog(appctxt, BbRouter, DOWNLOAD_DIR, courses_fixture, ChooseDirDialog)
 
     @classmethod
     def tearDownClass(cls):
@@ -111,16 +108,16 @@ class TestDownloadDialogBase(unittest.TestCase):
 
 @unittest.mock.patch.dict('ntu_learn_downloader_gui.logging.__dict__', MOCK_CONSTANTS)
 class TestNewDownloadDialog(TestDownloadDialogBase):
-    @patch("ntu_learn_downloader_gui.gui.DownloadDialog.handle_error")
+    @patch("ntu_learn_downloader_gui.gui.download_dialog.DownloadDialog.handle_error")
     @patch(
-        "ntu_learn_downloader_gui.gui.get_download_dir",
+        "ntu_learn_downloader_gui.gui.download_dialog.get_download_dir",
         return_value=get_download_dir_fixture_2,
     )
     @patch(  
-        "ntu_learn_downloader_gui.gui.get_file_download_link",
+        "ntu_learn_downloader_gui.gui.download_dialog.get_file_download_link",
         side_effect=mock_get_file_download_link_with_errors(error_links_w_fails={'https://ntulearn.ntu.edu.sg/bbcswebdav/pid-2015986-dt-content-rid-10582032_1/xid-10582032_1': 1}),
     )
-    @patch("ntu_learn_downloader_gui.gui.download", side_effect=mock_download)
+    @patch("ntu_learn_downloader_gui.gui.download_dialog.download", side_effect=mock_download)
     def test_get_download_link_failure_doesnt_hang_download(self, m_download, m_get_file_dl_link, mock3, mock_handle_error):
         self.assertEqual(self.form.data, [])
 
