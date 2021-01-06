@@ -79,6 +79,8 @@ class LoginDialog(QtWidgets.QDialog):
         <center>
         <h1>{self.latest_version.title}</h1>
         </center>
+        <p>Version {".".join([str(x) for x in self.latest_version.version])}</p>
+
         {body}
         <p><a href={self.latest_version.link}>Download here</a></p>
         """
