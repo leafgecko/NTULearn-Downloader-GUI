@@ -55,6 +55,7 @@ def mock_download(BbRouter, dl_link, full_file_path, callback=None):
 
 # app = QtWidgets.QApplication(sys.argv)
 appctxt = ApplicationContext()
+appctxt.build_settings["test_mode"] = True
 BbRouter = "PLACEHOLDER"
 
 
