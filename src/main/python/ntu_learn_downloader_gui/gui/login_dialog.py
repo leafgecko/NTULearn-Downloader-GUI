@@ -46,7 +46,7 @@ class LoginDialog(QtWidgets.QDialog):
 
     def display_latest_version(self, latest_version: Optional[VersionResult]):
         if latest_version is None:
-            self.updateLabel.setText("Unable to fetch lateset version")
+            self.updateLabel.setText("Unable to fetch latest version")
             return
         self.latest_version = latest_version
         if tuple([int(x) for x in self.version.split('.')]) == latest_version.version:
