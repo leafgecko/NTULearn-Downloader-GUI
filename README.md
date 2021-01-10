@@ -17,7 +17,7 @@ call venv\scripts\activate.bat
 Install dependancies:
 
 ```
-pip install deps/ntu_learn_downloader-0.2.1.tar.gz
+pip install deps/ntu_learn_downloader-0.2.2.tar.gz
 # on Mac/Linux
 pip install -r requirements.txt
 # on windows

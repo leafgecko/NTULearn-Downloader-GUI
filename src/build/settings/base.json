@@ -2,5 +2,5 @@
     "app_name": "NTU Learn Downloader",
     "author": "Kee Wan Ting",
     "main_module": "src/main/python/main.py",
-    "version": "0.0.1"
+    "version": "0.0.2"
 }
